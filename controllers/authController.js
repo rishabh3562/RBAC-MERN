@@ -4,15 +4,13 @@ import dotenv from "dotenv";
 
 dotenv.config();
 export const register = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, role = "viewer" } = req.body; // Default to viewer
 
     try {
         const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: "User already exists" });
-        }
+        if (existingUser) return res.status(400).json({ message: "User already exists" });
 
-        const newUser = new User({ email, password });
+        const newUser = new User({ email, password, role });
         await newUser.save();
 
         res.status(201).json({ message: "User registered successfully" });
